@@ -26,6 +26,13 @@ const mockTrendingContent = [
   },
 ];
 
+// ✅ Define proper type for the API response articles
+interface NewsApiArticle {
+  title?: string;
+  description?: string;
+  urlToImage?: string;
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -52,7 +59,8 @@ export default async function handler(
 
     const data = await response.json();
 
-    const transformed = data.articles.map((article: any, index: number) => ({
+    // ✅ Replace `any` with NewsApiArticle
+    const transformed = (data.articles as NewsApiArticle[]).map((article, index) => ({
       id: `${index + 1}`,
       title: article.title || "No Title",
       description: article.description || "No Description",
