@@ -1,15 +1,11 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/store";
+import { useDispatch } from "react-redux";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import { loadPreferences } from "@/store/slices/preferencesSlice";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch();
-  const darkMode = useSelector(
-    (state: RootState) => state.preferences.darkMode
-  );
 
   useEffect(() => {
     const categories = JSON.parse(localStorage.getItem("categories") || "[]");
