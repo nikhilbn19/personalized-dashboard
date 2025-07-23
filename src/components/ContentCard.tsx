@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { addFavorite, removeFavorite } from "@/store/slices/contentSlice";
@@ -42,9 +43,11 @@ export default function ContentCard({
 
   return (
     <div className="rounded-lg overflow-hidden shadow-md bg-white dark:bg-gray-800 transform transition duration-300 hover:scale-105 hover:shadow-lg">
-      <img
+      <Image
         src={imageUrl}
         alt={title}
+        width={800}
+        height={400}
         className="w-full h-40 object-cover transition duration-300"
       />
       <div className="p-4">
@@ -68,7 +71,6 @@ export default function ContentCard({
               : "Explore"}
           </button>
 
-          
           <button
             onClick={handleToggleFavorite}
             className={`ml-2 text-xl ${

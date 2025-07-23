@@ -7,10 +7,11 @@ import { loadPreferences } from "@/store/slices/preferencesSlice";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch();
-  const darkMode = useSelector((state: RootState) => state.preferences.darkMode);
+  const darkMode = useSelector(
+    (state: RootState) => state.preferences.darkMode
+  );
 
   useEffect(() => {
-    
     const categories = JSON.parse(localStorage.getItem("categories") || "[]");
     const dark = JSON.parse(localStorage.getItem("darkMode") || "false");
     const searchQuery = localStorage.getItem("searchQuery") || "";
@@ -23,7 +24,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       })
     );
 
-    
     if (dark) {
       document.documentElement.classList.add("dark");
     } else {
@@ -31,7 +31,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
   }, [dispatch]);
 
-  
   return (
     <div className="flex h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
       <Sidebar />

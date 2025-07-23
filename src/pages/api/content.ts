@@ -2,6 +2,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
 
+interface Article {
+  title?: string;
+  description?: string;
+  urlToImage?: string;
+}
+
 const mockTrendingContent = [
   {
     id: "trending-1",
@@ -25,12 +31,6 @@ const mockTrendingContent = [
     type: "finance",
   },
 ];
-
-interface Article {
-  title?: string;
-  description?: string;
-  urlToImage?: string;
-}
 
 export default async function handler(
   req: NextApiRequest,
@@ -63,8 +63,7 @@ export default async function handler(
       title: article.title || "No Title",
       description: article.description || "No Description",
       imageUrl:
-        article.urlToImage ||
-        "https://source.unsplash.com/random/800x400?news",
+        article.urlToImage || "https://source.unsplash.com/random/800x400?news",
       type: category || "technology",
     }));
 

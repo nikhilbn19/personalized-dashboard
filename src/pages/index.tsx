@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { useEffect, useState } from "react";
 
-
 type ApiCategory = "news" | "movie" | "social" | "music" | "sports" | "finance";
 
 const mapApiCategoryToUi = (
@@ -37,38 +36,35 @@ export default function Home() {
   const [error, setError] = useState<boolean>(false);
   const [content, setContent] = useState<Content[]>([]);
 
-  const fetchContent = () => {
-    setLoading(true);
-    setError(false);
-
-    let query = "";
-    if (selectedCategories.length > 0) {
-      query += `category=${selectedCategories[0]}`;
-    } else {
-      query += `category=technology`;
-    }
-
-    if (searchQuery.trim()) {
-      query += `&search=${encodeURIComponent(searchQuery.trim())}`;
-    }
-
-    fetch(`/api/content?${query}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch");
-        return res.json();
-      })
-      .then((data: Content[]) => {
-        setContent(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching content:", err);
-        setError(true);
-        setLoading(false);
-      });
-  };
-
   useEffect(() => {
+    const fetchContent = () => {
+      setLoading(true);
+      setError(false);
+
+      let query = selectedCategories.length > 0
+        ? `category=${selectedCategories[0]}`
+        : `category=technology`;
+
+      if (searchQuery.trim()) {
+        query += `&search=${encodeURIComponent(searchQuery.trim())}`;
+      }
+
+      fetch(`/api/content?${query}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch");
+          return res.json();
+        })
+        .then((data: Content[]) => {
+          setContent(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Error fetching content:", err);
+          setError(true);
+          setLoading(false);
+        });
+    };
+
     fetchContent();
   }, [selectedCategories, searchQuery]);
 
@@ -83,7 +79,7 @@ export default function Home() {
         <div className="text-center text-red-500">
           🚨 Failed to load content. <br />
           <button
-            onClick={fetchContent}
+            onClick={() => window.location.reload()}
             className="mt-3 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
           >
             Retry 🔄
