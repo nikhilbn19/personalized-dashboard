@@ -1,16 +1,20 @@
 import Layout from "@/components/Layout";
 import ContentCard from "@/components/ContentCard";
 import SearchBar from "@/components/SearchBar";
-import Loader from "@/components/Loader"; // 🆕 Added
+import Loader from "@/components/Loader";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { useEffect, useState } from "react";
 
+// Define API categories properly
+type ApiCategory = "news" | "movie" | "social" | "music" | "sports" | "finance";
+
 const mapApiCategoryToUi = (
-  apiCategory: string
+  apiCategory: ApiCategory
 ): "technology" | "sports" | "finance" => {
-  if (apiCategory === "movies" || apiCategory === "music") return "sports";
-  return (apiCategory as "technology" | "sports" | "finance") || "technology";
+  if (apiCategory === "movie" || apiCategory === "music") return "sports";
+  if (apiCategory === "social") return "finance";
+  return "technology";
 };
 
 type Content = {
@@ -18,7 +22,7 @@ type Content = {
   title: string;
   description: string;
   imageUrl: string;
-  type: string;
+  type: ApiCategory;
 };
 
 export default function Home() {
@@ -29,8 +33,8 @@ export default function Home() {
     (state: RootState) => state.preferences.searchQuery
   );
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
   const [content, setContent] = useState<Content[]>([]);
 
   const fetchContent = () => {
@@ -74,7 +78,7 @@ export default function Home() {
       <SearchBar />
 
       {loading ? (
-        <Loader /> // 🆕 Use Loader here
+        <Loader />
       ) : error ? (
         <div className="text-center text-red-500">
           🚨 Failed to load content. <br />
