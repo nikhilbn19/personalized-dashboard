@@ -1,32 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
-
-
-const mockContent = [
-  {
-    id: "1",
-    title: "Breaking News: Tech Innovations 2025",
-    description: "Discover the latest trends in AI, robotics, and more.",
-    imageUrl: "https://source.unsplash.com/random/800x400?technology",
-    type: "technology",
-  },
-  {
-    id: "2",
-    title: "Top Sports Moments of the Year 🏆",
-    description: "Catch up on the most exciting sports highlights and records.",
-    imageUrl: "https://source.unsplash.com/random/800x400?sports",
-    type: "sports",
-  },
-  {
-    id: "3",
-    title: "Finance Tips for 2025 💰",
-    description: "Learn how to save, invest, and grow your wealth.",
-    imageUrl: "https://source.unsplash.com/random/800x400?finance",
-    type: "finance",
-  },
-];
 
 const mockTrendingContent = [
   {
@@ -52,41 +26,51 @@ const mockTrendingContent = [
   },
 ];
 
+interface Article {
+  title?: string;
+  description?: string;
+  urlToImage?: string;
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { category = "technology", search = "", trending } = req.query;
+  const { category, search, trending } = req.query;
 
- 
   if (trending === "true") {
     return res.status(200).json(mockTrendingContent);
   }
 
- 
-  const apiUrl = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&q=${encodeURIComponent(
-    search as string
-  )}&pageSize=10&apiKey=${NEWS_API_KEY}`;
-
   try {
+    let apiUrl = `https://newsapi.org/v2/top-headlines?country=in&pageSize=10&apiKey=${NEWS_API_KEY}`;
+
+    if (category && typeof category === "string") {
+      apiUrl += `&category=${category}`;
+    }
+
+    if (search && typeof search === "string" && search.trim() !== "") {
+      apiUrl += `&q=${encodeURIComponent(search.trim())}`;
+    }
+
     const response = await fetch(apiUrl);
-    if (!response.ok) throw new Error("NewsAPI fetch failed");
+    if (!response.ok) throw new Error("Failed to fetch from NewsAPI");
 
     const data = await response.json();
 
-   
-    const transformed = data.articles.map((article: any, index: number) => ({
-      id: `${index}-${article.source?.id || "news"}`,
+    const transformed = (data.articles as Article[]).map((article, index) => ({
+      id: `${index + 1}`,
       title: article.title || "No Title",
       description: article.description || "No Description",
-      imageUrl: article.urlToImage || "https://via.placeholder.com/800x400",
-      type: category,
+      imageUrl:
+        article.urlToImage ||
+        "https://source.unsplash.com/random/800x400?news",
+      type: category || "technology",
     }));
 
     res.status(200).json(transformed);
   } catch (error) {
-    console.error("Error fetching NewsAPI:", error);
-    
-    res.status(200).json(mockContent);
+    console.error("API Error:", error);
+    res.status(500).json({ message: "Failed to fetch news content." });
   }
 }

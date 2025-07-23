@@ -2,12 +2,13 @@ import Layout from "@/components/Layout";
 import ContentCard from "@/components/ContentCard";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { clearFavorites } from "@/store/slices/favoritesSlice"; 
+import { clearFavorites } from "@/store/slices/favoritesSlice";
 import Link from "next/link";
 
+type ApiCategory = "news" | "movie" | "social";
 
 const mapApiCategoryToUi = (
-  apiCategory: "news" | "movie" | "social"
+  apiCategory: ApiCategory
 ): "technology" | "sports" | "finance" => {
   switch (apiCategory) {
     case "news":
@@ -17,7 +18,7 @@ const mapApiCategoryToUi = (
     case "social":
       return "finance";
     default:
-      return "technology"; 
+      return "technology";
   }
 };
 
@@ -37,7 +38,6 @@ export default function FavoritesPage() {
     <Layout>
       <h1 className="text-2xl font-bold mb-4">Your Favorites ❤️</h1>
 
-      
       {favorites.length > 0 && (
         <div className="mb-4 flex justify-end">
           <button
@@ -69,7 +69,7 @@ export default function FavoritesPage() {
               title={item.title}
               description={item.description}
               imageUrl={item.imageUrl}
-              type={mapApiCategoryToUi(item.type as any)}
+              type={mapApiCategoryToUi(item.type as ApiCategory)}
             />
           ))}
         </div>
