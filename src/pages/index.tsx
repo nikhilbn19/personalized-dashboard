@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { useEffect, useState } from "react";
 
-// Define API categories properly
+
 type ApiCategory = "news" | "movie" | "social" | "music" | "sports" | "finance";
 
 const mapApiCategoryToUi = (
